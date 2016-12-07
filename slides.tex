@@ -1,0 +1,307 @@
+\documentclass[cjk]{beamer}  % 使用Beamer包
+%\hypersetup{pdfpagemode=FullScreen}
+\usepackage{CJK}   % 中文环境
+\usepackage{indentfirst}
+%\usepackage{beamerthemesplit}
+
+\usepackage{makeidx}
+%\usepackage[dvipdfm,CJKbookmarks,bookmarks=true,bookmarksnumbered=true]{hyperref}
+%\usepackage[CJKbookmarks,bookmarks=true,bookmarksnumbered=true]{hyperref}
+\usepackage{listings}
+
+
+\hypersetup{colorlinks, linkcolor=blue, citecolor=blue,
+    urlcolor=blue,
+    plainpages=flase,
+    pdfcreator=tex,
+    bookmarksopen=true,
+    pdfhighlight=/P,
+    pdfauthor={Yao Qi <qiyaoltc@gmail.com>},
+    pdfcreator={cTeX},
+%    pdftitle={iptables 入门},
+%    pdfkeywords={iptables 入门 Rae szlug},
+    pdfstartview=FitH,
+    pdfpagemode=UseOutlines,%UseOutlines, %None, FullScreen, UseThumbs
+}
+
+%\usepackage[all,bottom]{draftcopy}
+%\draftcopyName{Copyright by Rae <crquan@gmail.com>, 2006}{50}
+%\draftcopySetGrey{0.8} \draftcopyPageTransform{55 rotate}
+%\draftcopyPageX{80}\draftcopyPageY{-25}
+
+\lstset{
+  basicstyle=\tiny,          % print whole listing small
+  showstringspaces=false,
+  numbers=left,
+  numberstyle=\tiny,
+  % labelstep=1,
+  % commentstyle=\textsl,
+  keywordstyle=\color{green}\bfseries\underbar,     % underlined bold red keywords
+  identifierstyle={},         % nothing happens to other identifiers
+  commentstyle=\mdseries\color{blue}, % white comments
+  stringstyle=\color{red}\ttfamily}      % typewriter type for strings
+% stringspaces=false}         % no special string spaces
+
+
+
+%\usetheme{Madrid}  % 采用的主题
+\usetheme{Warsaw}
+%\usetheme{Rochester}
+%\usetheme{Berkeley}
+%\usetheme{PaloAlto}
+%\usetheme{Montpellier}
+%\usetheme{Berlin}
+%\usetheme{Ilmenau}
+%\usetheme{Dresden}
+
+%\usecolortheme{albatross} % 采用的配色。
+%\usecolortheme{beaver} white background
+%\usecolortheme{beetle}
+%\usecolortheme{dolphin}
+%\usecolortheme{fly}
+%\usecolortheme{lily}
+
+%\useoutertheme{tree}
+
+\usefonttheme{structureitalicserif}
+
+\begin{document}
+\begin{CJK}{UTF8}{gbsn}
+
+\title{调试器}
+\author{\href{mailto:qiyaoltc@gmail.com}{齐尧}}
+\date{HelloGCC 2010 \\ \today}
+
+% 生成上面定义的"\title", "\author", "\date"等信息
+\frame{\titlepage}
+
+
+% 生成目录菜单
+\section{目录及流程}
+\frame{
+    \tableofcontents
+}
+
+\section{关于我和我的话题}
+
+\begin{frame}
+  \frametitle{关于我和我的话题}
+  \begin{columns}
+    \column{5cm}
+    \begin{overprint}
+
+      \begin{block}{我}
+        \begin{itemize}
+        \item 齐尧 \href{mailto:qiyaoltc@gmail.com}{qiyaoltc@gmail.com}
+        \item 曾经在\href{http://sourceware.org/frysk/}{frysk}项目为PowerPC64维护断点和底层事件循环
+        \item 中间中断了三年的toolchain开发，现在又开始继续toolchain的工作
+        \item 现在还算调试器的初学者
+        \end{itemize}
+      \end{block}
+
+    \end{overprint}
+
+
+    \column{5cm}
+    \begin{overprint}
+
+      \begin{block}{我的话题}
+        \begin{itemize}
+        \item 它\textbf{不可能}让你在三十分钟内，让你明白调试器的内部，
+        \item 甚至\textbf{不可能}让你明白调式器的一个组件或者模块，
+        \item 它\textbf{能}让你从最简单的角度，理解调试器的必要功能，
+        \item 掌握学习调试器的方法
+        \end{itemize}
+      \end{block}
+
+    \end{overprint}
+  \end{columns}
+\end{frame}
+
+\section{ 最简单的调试器 }
+
+\subsection{最简单的调试器是什么样子的}
+\frame{
+  \frametitle{调试器}
+  \begin{itemize}
+  \item 父进程（调试器） 与 子进程（被调试程序）
+  \item 通过操作系统提供的接口，
+  \end{itemize}
+
+  \begin{table}
+    \begin{tabular}{|c|c|l|} \hline
+      功能&操作&实现\\ \hline
+      控制被调试程序&&ptrace, signal\\ \hline
+      监视被调试程序&&breakpoint\\ \hline
+      &&\\ \hline
+    \end{tabular}
+  \end{table}
+}
+
+\frame[containsverbatim]{
+  \frametitle{最简单的调试器是什么样子的}
+
+  \lstinputlisting[language=C,caption={simple-debugger.c},
+  firstline=10,lastline=36,
+  captionpos={b},label={listing:introduction:simple-debugger}]
+  {../../book/introduction/simple-debugger.c}
+
+  \begin{itemize}
+  \item ab
+  \item cd
+  \end{itemize}
+}
+\subsection{调试器依赖的一些OS功能，比如ptrace}
+\frame{
+  \frametitle{}
+  \begin{itemize}
+  \item ptrace 
+  \item Emacs + cscope；
+  \end{itemize}
+}
+    
+\subsection{和标准调试器的比较}
+\frame{
+  \frametitle{和标准调试器的比较}
+  \begin{itemize}
+  \item 断点
+  \item ELF
+  \item Frame Stack unwind
+  \item Shared Object；
+  \item Thread；
+  \end{itemize}
+}
+
+\section{细节}
+
+\subsection{断点}
+\frame{
+  \frametitle{断点到底是什么？}
+
+  \begin{overprint}
+
+    \begin{block}{断点}
+      \begin{itemize}
+      \item 与指令集密切相关的特殊指令或者非法指令
+      \item 当这个指令被执行的时候，导致操作系统 trap，调试器就知道程序执行到了一个断点，
+      
+      \end{itemize}
+    \end{block}
+
+    \begin{block}{更多的问题}
+      \begin{itemize}
+      \item 编译器一般不会产生这样的指令，谁加入的？怎么加入的？原来的指令怎么办？
+      \item 当程序执行到某个断点指令，产生trap时候，调试器怎么知道，到底是执行到了哪个断点，
+      \item 调试器把断点指令加入的程序中，原来的程序还执行吗？怎么执行？
+      \end{itemize}
+    \end{block}
+
+  \end{overprint}
+
+}
+
+\frame{
+  \frametitle{断点}
+  \lstinputlisting[language=C,caption={int3.c},captionpos={b},
+  firstline=3,
+  label={listing:breakpoint:int3}]
+  {../../book/breakpoint/int3.c}
+
+  \lstinputlisting[caption={output of simple-break},captionpos={b},
+  label={listing:breakpoint:simple-break-output}]
+  {../../book/breakpoint/simple-break-output}
+
+  \begin{itemize}
+    \item 展示一个20行的程序，处理断点。如Listing 2-1,2-2,2-3所示
+    \item 调式器在处理断点的一些内部操作
+  \end{itemize}
+
+  \begin{overprint}
+
+    \begin{block}{理解结果}
+      \begin{itemize}
+      \item 为什么收到SIGTRAP两次？
+      \item 0x40000810 和 0x8048363 分别是什么地址？
+      \end{itemize}
+    \end{block}
+
+  \end{overprint}
+
+}
+
+\frame{
+  \frametitle{断点}
+
+  \begin{overprint}
+
+    \begin{block}{0x40000810 和 0x8048363 分别是什么地址？}
+      \begin{itemize}
+      \item abc
+      \item 0
+      \end{itemize}
+      \lstinputlisting[caption={Disassembly the main() function},
+      firstline=9,lastline=11,
+      captionpos={b},label={listing:breakpoint:dis-int3}]
+      {../../book/breakpoint/dis-int3}
+    \end{block}
+
+    \begin{block}{为什么收到SIGTRAP两次？}
+      \begin{itemize}
+      \item abc
+      \item 0
+      \end{itemize}
+    \end{block}
+
+  \end{overprint}
+}
+
+\frame{
+  \frametitle{断点操作}
+
+\begin{figure}
+  \includegraphics{../../book/breakpoint/break.1}\hfill
+  \includegraphics{../../book/breakpoint/break.2}\hfill
+  \includegraphics{../../book/breakpoint/break.3}\hfill
+
+%  \includegraphics{../../book/breakpoint/break.4}\hfill
+%  \includegraphics{../../book/breakpoint/break.5}\hfill
+%  \includegraphics{../../book/breakpoint/break.6}
+  \caption{调试器设置断点}
+  \label{fig:break}
+\end{figure}
+}
+
+\frame{
+  \frametitle{断点操作}
+
+\begin{figure}
+  \includegraphics{../../book/breakpoint/break.4}\hfill
+  \includegraphics{../../book/breakpoint/break.5}\hfill
+  \includegraphics{../../book/breakpoint/break.6}\hfill
+  \includegraphics{../../book/breakpoint/break.2}
+  \caption{调试器设置断点}
+  \label{fig:break}
+\end{figure}
+}
+
+\subsection{共享对象}
+\frame{
+  \frametitle{共享对象}
+  \begin{itemize}
+    \item调式器怎样处理共享对象。
+    \item共享对象的加载
+  \end{itemize}
+}
+
+\subsection{线程}
+\frame{
+  \frametitle{线程}
+  \begin{itemize}
+    \item线程的实现，以及对调式的支持(nptl-db)
+    \item调试器对线程的处理
+  \end{itemize}
+}
+
+
+\end{CJK}
+\end{document}
